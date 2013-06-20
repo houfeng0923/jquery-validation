@@ -54,7 +54,7 @@ jQuery.validator.addMethod("ziprange", function(value, element) {
 }, "Your ZIP-code must be in the range 902xx-xxxx to 905-xx-xxxx");
 
 jQuery.validator.addMethod("zipcodeUS", function(value, element) {
-	return this.optional(element) || /\d{5}-\d{4}$|^\d{5}$/.test(value);
+	return this.optional(element) || /^\d{5}-\d{4}$|^\d{5}$/.test(value);
 }, "The specified US ZIP Code is invalid");
 
 jQuery.validator.addMethod("integer", function(value, element) {
@@ -276,6 +276,23 @@ jQuery.validator.addMethod("iban", function(value, element) {
 	return cRest === 1;
 }, "Please specify a valid IBAN");
 
+/**
+ * BIC is the business identifier code (ISO 9362). This BIC check is not a guarantee for authenticity.
+ *
+ * BIC pattern: BBBBCCLLbbb (8 or 11 characters long; bbb is optional)
+ *
+ * BIC definition in detail:
+ * - First 4 characters - bank code (only letters)
+ * - Next 2 characters - ISO 3166-1 alpha-2 country code (only letters)
+ * - Next 2 characters - location code (letters and digits)
+ *   a. shall not start with '0' or '1'
+ *   b. second character must be a letter ('O' is not allowed) or one of the following digits ('0' for test (therefore not allowed), '1' for passive participant and '2' for active participant)
+ * - Last 3 characters - branch code, optional (shall not start with 'X' except in case of 'XXX' for primary office) (letters and digits)
+ */
+jQuery.validator.addMethod("bic", function(value, element) {
+    return this.optional( element ) || /^([A-Z]{6}[A-Z2-9][A-NP-Z1-2])(X{3}|[A-WY-Z0-9][A-Z0-9]{2})?$/.test( value );
+}, "Please specify a valid BIC code");
+
 jQuery.validator.addMethod("dateNL", function(value, element) {
 	return this.optional(element) || /^(0?[1-9]|[12]\d|3[01])[\.\/\-](0?[1-9]|1[012])[\.\/\-]([12]\d)?(\d\d)$/.test(value);
 }, "Please enter a correct date");
@@ -372,14 +389,14 @@ jQuery.validator.addMethod('phoneUK', function(phone_number, element) {
 jQuery.validator.addMethod('mobileUK', function(phone_number, element) {
 	phone_number = phone_number.replace(/\(|\)|\s+|-/g,'');
 	return this.optional(element) || phone_number.length > 9 &&
-		phone_number.match(/^(?:(?:(?:00\s?|\+)44\s?|0)7(?:[45789]\d{2}|624)\s?\d{3}\s?\d{3})$/);
+		phone_number.match(/^(?:(?:(?:00\s?|\+)44\s?|0)7(?:[1345789]\d{2}|624)\s?\d{3}\s?\d{3})$/);
 }, 'Please specify a valid mobile number');
 
 //Matches UK landline + mobile, accepting only 01-3 for landline or 07 for mobile to exclude many premium numbers
 jQuery.validator.addMethod('phonesUK', function(phone_number, element) {
 	phone_number = phone_number.replace(/\(|\)|\s+|-/g,'');
 	return this.optional(element) || phone_number.length > 9 &&
-		phone_number.match(/^(?:(?:(?:00\s?|\+)44\s?|0)(?:1\d{8,9}|[23]\d{9}|7(?:[45789]\d{8}|624\d{6})))$/);
+		phone_number.match(/^(?:(?:(?:00\s?|\+)44\s?|0)(?:1\d{8,9}|[23]\d{9}|7(?:[1345789]\d{8}|624\d{6})))$/);
 }, 'Please specify a valid uk phone number');
 // On the above three UK functions, do the following server side processing:
 //  Compare original input with this RegEx pattern:
@@ -527,12 +544,12 @@ jQuery.validator.addMethod("pattern", function(value, element, param) {
 jQuery.validator.addMethod("require_from_group", function(value, element, options) {
 	var validator = this;
 	var selector = options[1];
-	var validOrNot = $(selector, element.form).filter(function() {
+	var validOrNot = jQuery(selector, element.form).filter(function() {
 		return validator.elementValue(this);
 	}).length >= options[0];
 
 	if(!$(element).data('being_validated')) {
-		var fields = $(selector, element.form);
+		var fields = jQuery(selector, element.form);
 		fields.data('being_validated', true);
 		fields.valid();
 		fields.data('being_validated', false);
@@ -562,12 +579,12 @@ jQuery.validator.addMethod("skip_or_fill_minimum", function(value, element, opti
 	var validator = this,
 		numberRequired = options[0],
 		selector = options[1];
-	var numberFilled = $(selector, element.form).filter(function() {
+	var numberFilled = jQuery(selector, element.form).filter(function() {
 		return validator.elementValue(this);
 	}).length;
 	var valid = numberFilled >= numberRequired || numberFilled === 0;
 
-	if(!$(element).data('being_validated')) {
+	if(!jQuery(element).data('being_validated')) {
 		var fields = $(selector, element.form);
 		fields.data('being_validated', true);
 		fields.valid();
@@ -588,7 +605,7 @@ jQuery.validator.addMethod("accept", function(value, element, param) {
 		return optionalValue;
 	}
 
-	if ($(element).attr("type") === "file") {
+	if (jQuery(element).attr("type") === "file") {
 		// If we are using a wildcard, make it regex friendly
 		typeParam = typeParam.replace(/\*/g, ".*");
 

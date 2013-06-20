@@ -363,9 +363,9 @@ test("extension", function() {
 	ok(!method( "picture.pdf", "doc" ), "Invalid custom accept type" );
 	ok(!method( "picture.doc", "pdf" ), "Invalid custom accept type" );
 
-	ok( method( "picture.pdf", "doc,pdf" ), "Valid custom accept type, comma seperated" );
-	ok( method( "picture.pdf", "pdf,doc" ), "Valid custom accept type, comma seperated" );
-	ok(!method( "picture.pdf", "gop,top" ), "Invalid custom accept type, comma seperated" );
+	ok( method( "picture.pdf", "doc,pdf" ), "Valid custom accept type, comma separated" );
+	ok( method( "picture.pdf", "pdf,doc" ), "Valid custom accept type, comma separated" );
+	ok(!method( "picture.pdf", "gop,top" ), "Invalid custom accept type, comma separated" );
 });
 
 test("remote", function() {
@@ -546,25 +546,54 @@ module("additional methods");
 
 test("phone (us)", function() {
 	var method = methodTest("phoneUS");
-	ok( method( "1(212)-999-2345" ), "Valid us phone number" );
-	ok( method( "212 999 2344" ), "Valid us phone number" );
-	ok( method( "212-999-0983" ), "Valid us phone number" );
-	ok(!method( "111-123-5434" ), "Invalid us phone number" );
-	ok(!method( "212 123 4567" ), "Invalid us phone number" );
+	ok( method( "1(212)-999-2345" ), "Valid US phone number" );
+	ok( method( "212 999 2344" ), "Valid US phone number" );
+	ok( method( "212-999-0983" ), "Valid US phone number" );
+	ok(!method( "111-123-5434" ), "Invalid US phone number" );
+	ok(!method( "212 123 4567" ), "Invalid US phone number" );
 });
 
 test("phoneUK", function() {
 	var method = methodTest("phoneUK");
+	ok( method( "0117 333 5555" ), "Valid UK Phone Number" );
+	ok( method( "0121 555 5555" ), "Valid UK Phone Number" );
+	ok( method( "01633 555555" ), "Valid UK Phone Number" );
+	ok( method( "01298 28555" ), "Valid UK Phone Number" );
+	ok( method( "015395 55555" ), "Valid UK Phone Number" );
+	ok( method( "016977 3999" ), "Valid UK Phone Number" );
+	ok( method( "020 3000 5555" ), "Valid UK Phone Number" );
+	ok( method( "024 7500 5555" ), "Valid UK Phone Number" );
+	ok( method( "0333 555 5555" ), "Valid UK Phone Number" );
+	ok( method( "0500 555555" ), "Valid UK Phone Number" );
+	ok( method( "055 3555 5555" ), "Valid UK Phone Number" );
+	ok( method( "07122 555555" ), "Valid UK Phone Number" );
 	ok( method( "07222 555555" ), "Valid UK Phone Number" );
+	ok( method( "07322 555555" ), "Valid UK Phone Number" );
+	ok( method( "0800 555 5555" ), "Valid UK Phone Number" );
+	ok( method( "0800 355555" ), "Valid UK Phone Number" );
+	ok( method( "0843 555 5555" ), "Valid UK Phone Number" );
+	ok( method( "0872 555 5555" ), "Valid UK Phone Number" );
+	ok( method( "0903 555 5555" ), "Valid UK Phone Number" );
+	ok( method( "0983 555 5555" ), "Valid UK Phone Number" );
+	ok( method( "(07122) 555555" ), "Valid UK Phone Number" );
 	ok( method( "(07222) 555555" ), "Valid UK Phone Number" );
+	ok( method( "(07322) 555555" ), "Valid UK Phone Number" );
+	ok( method( "+44 7122 555 555" ), "Valid UK Phone Number" );
 	ok( method( "+44 7222 555 555" ), "Valid UK Phone Number" );
+	ok( method( "+44 7322 555 555" ), "Valid UK Phone Number" );
 	ok(!method( "7222 555555" ), "Invalid UK Phone Number" );
 	ok(!method( "+44 07222 555555" ), "Invalid UK Phone Number" );
 });
 
 test("mobileUK", function() {
 	var method = methodTest("mobileUK");
+	ok( method( "07134234323" ), "Valid UK Mobile Number" );
+	ok( method( "07334234323" ), "Valid UK Mobile Number" );
+	ok( method( "07624234323" ), "Valid UK Mobile Number" );
 	ok( method( "07734234323" ), "Valid UK Mobile Number" );
+	ok( method( "+447134234323" ), "Valid UK Mobile Number" );
+	ok( method( "+447334234323" ), "Valid UK Mobile Number" );
+	ok( method( "+447624234323" ), "Valid UK Mobile Number" );
 	ok( method( "+447734234323" ), "Valid UK Mobile Number" );
 	ok(!method( "07034234323" ), "Invalid UK Mobile Number" );
 	ok(!method( "0753423432" ), "Invalid UK Mobile Number" );
@@ -660,6 +689,34 @@ test("iban", function() {
 	ok( method( "TR33 0006 1005 1978 6457 8413 26"), "Valid IBAN - TR");
 	ok( method( "AE07 0331 2345 6789 0123 456"), "Valid IBAN - AE");
 	ok( method( "GB29 NWBK 6016 1331 9268 19"), "Valid IBAN - GB");
+});
+
+/**
+ * BIC tests (For BIC definition take a look on the implementation itself)
+ */
+test("bic", function() {
+    var method = methodTest( "bic" );
+
+    ok( !method( "PBNKDEF" ), "Invalid BIC: too short" );
+    ok( !method( "DEUTDEFFA1" ), "Invalid BIC: disallowed length" );
+    ok( !method( "PBNKDEFFXXX1" ), "Invalid BIC: too long" );
+    ok( !method( "1BNKDEFF" ), "Invalid BIC: invalid digit" );
+    ok( !method( "PBNKDE1F" ), "Invalid BIC: invalid digit" );
+    ok( !method( "PBNKDEF3" ), "Invalid BIC: invalid digit" );
+    ok( !method( "PBNKDEFO" ), "Invalid BIC: invalid char" );
+    ok( !method( "INGDDEFFXAA" ), "Invalid BIC: invalid char" );
+    ok( !method( "DEUTDEF0" ), "Invalid BIC: invalid digit" );
+
+    ok( method( "DEUTDEFF" ), "Valid BIC" );
+    ok( method( "DEUTDEFFXXX" ), "Valid BIC" );
+    ok( method( "PBNKDE2F" ), "Valid BIC" );
+    ok( method( "INGDDEFF101" ), "Valid BIC" );
+    ok( method( "INGDDEF2134" ), "Valid BIC" );
+    ok( method( "INGDDE91XXX" ), "Valid BIC" );
+    ok( method( "INGDDEF2" ), "Valid BIC" );
+    ok( method( "AAFFFRP1" ), "Valid BIC" );
+    ok( method( "DEUTDEFFAB1" ), "Valid BIC" );
+    ok( method( "DEUTDEFFAXX" ), "Valid BIC" );
 });
 
 test("postcodeUK", function() {
@@ -959,10 +1016,12 @@ test("zipcodeUS", function() {
 	var method = methodTest("zipcodeUS");
 	ok( method( "12345" ), "Valid zip" );
 	ok( method( "12345-2345" ), "Valid zip" );
+	ok( method( "90210-4567" ), "Valid zip" );
 	ok(!method( "1" ), "Invalid zip" );
 	ok(!method( "1234" ), "Invalid zip" );
 	ok(!method( "123-23" ), "Invalid zip" );
 	ok(!method( "12345-43" ), "Invalid zip" );
+	ok(!method( "123456-7890" ), "Invalid zip" );
 });
 
 })(jQuery);

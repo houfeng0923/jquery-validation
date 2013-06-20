@@ -1,4 +1,4 @@
-[jQuery Validation Plugin](http://bassistance.de/jquery-plugins/jquery-plugin-validation/) - Form validation made easy
+[jQuery Validation Plugin](http://jqueryvalidation.org/) - Form validation made easy
 ================================
 
 [![Build Status](https://secure.travis-ci.org/jzaefferer/jquery-validation.png)](http://travis-ci.org/jzaefferer/jquery-validation)
@@ -29,7 +29,14 @@ $("form").validate();
 </script>
 ```
 
-For more information on how to setup a rules and customizations, [check the documentation](http://docs.jquery.com/Plugins/Validation).
+For more information on how to setup a rules and customizations, [check the documentation](http://jqueryvalidation.org/documentation/).
+
+## Reporting an Issue
+
+1. Make sure the problem you're addressing is reproducible.
+2. Use http://jsbin.com or http://jsfiddle.net to provide a test page.
+3. Indicate what browsers the isssue can be reproduced in.
+4. What version of the plug-in is the issue reproducable in. Is it reproducable after updating to the latest version.
 
 ## Contributing
 Follow the [jQuery style guide](http://contribute.jquery.com/style-guides/js), even if existing code doesn't. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
